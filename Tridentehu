@@ -1,0 +1,194 @@
+-- TIKTOK: @tridentehub
+-- Key: KeynovaRoubeumBrainrot
+
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local RunService = game:GetService("RunService")
+local UIS = game:GetService("UserInputService")
+local Workspace = game:GetService("Workspace")
+local TweenService = game:GetService("TweenService")
+
+-- KEY SYSTEM
+local keyRequired = "KeynovaRoubeumBrainrot"
+local ScreenGui = Instance.new("ScreenGui", LocalPlayer:WaitForChild("PlayerGui"))
+ScreenGui.Name = "ATR_GUI"
+ScreenGui.ResetOnSpawn = false
+
+local KeyFrame = Instance.new("Frame", ScreenGui)
+KeyFrame.Size = UDim2.new(0, 400, 0, 200)
+KeyFrame.Position = UDim2.new(0.5, -200, 0.5, -100)
+KeyFrame.BackgroundColor3 = Color3.fromRGB(30,30,30)
+KeyFrame.Active = true
+KeyFrame.Draggable = true
+KeyFrame.Name = "KeyPanel"
+
+local UICornerKey = Instance.new("UICorner", KeyFrame)
+UICornerKey.CornerRadius = UDim.new(0,12)
+
+local Title = Instance.new("TextLabel", KeyFrame)
+Title.Size = UDim2.new(1,0,0,40)
+Title.BackgroundTransparency = 1
+Title.Text = "ATR Scripter X Brainrot - KEY SYSTEM"
+Title.Font = Enum.Font.GothamBold
+Title.TextColor3 = Color3.new(1,1,1)
+Title.TextSize = 20
+
+local KeyBox = Instance.new("TextBox", KeyFrame)
+KeyBox.PlaceholderText = "Digite sua key aqui..."
+KeyBox.Size = UDim2.new(0.8,0,0,40)
+KeyBox.Position = UDim2.new(0.1,0,0.3,0)
+KeyBox.BackgroundColor3 = Color3.fromRGB(45,45,45)
+KeyBox.Font = Enum.Font.Gotham
+KeyBox.TextColor3 = Color3.new(1,1,1)
+KeyBox.TextSize = 18
+
+local GetKey = Instance.new("TextButton", KeyFrame)
+GetKey.Size = UDim2.new(0.4,0,0,30)
+GetKey.Position = UDim2.new(0.1,0,0.6,0)
+GetKey.Text = "GetKey"
+GetKey.BackgroundColor3 = Color3.fromRGB(70,70,70)
+GetKey.Font = Enum.Font.Gotham
+GetKey.TextColor3 = Color3.new(1,1,1)
+GetKey.TextSize = 16
+GetKey.MouseButton1Click:Connect(function()
+    if setclipboard then setclipboard("https://rekonise.com/key-script-x-roube-um-brainrot-dvdwv") end
+end)
+
+local VerifyButton = Instance.new("TextButton", KeyFrame)
+VerifyButton.Size = UDim2.new(0.4,0,0,30)
+VerifyButton.Position = UDim2.new(0.5,0,0.6,0)
+VerifyButton.Text = "Verificar"
+VerifyButton.BackgroundColor3 = Color3.fromRGB(50,120,50)
+VerifyButton.Font = Enum.Font.Gotham
+VerifyButton.TextColor3 = Color3.new(1,1,1)
+VerifyButton.TextSize = 16
+
+local CloseX = Instance.new("TextButton", KeyFrame)
+CloseX.Size = UDim2.new(0,30,0,30)
+CloseX.Position = UDim2.new(1,-35,0,5)
+CloseX.Text = "X"
+CloseX.BackgroundColor3 = Color3.fromRGB(255,50,50)
+CloseX.TextColor3 = Color3.new(1,1,1)
+CloseX.Font = Enum.Font.GothamBold
+CloseX.TextSize = 16
+CloseX.MouseButton1Click:Connect(function()
+    ScreenGui:Destroy()
+end)
+
+-- FUNÇÕES
+local menu,jumpBtn,godBtn,noclipBtn,desyncBtn,flyBtn,thirdBtn,xrayBtn,espBtn,discordBtn
+local jumpActive, godActive, noclipActive, desyncActive, flyActive, xrayActive, espActive = false,false,false,false,false,false,false
+local minimized = false
+
+local function notify(text) print("[NOTIFICAÇÃO]: "..text) end
+
+local function criarMenu()
+    if menu then return end
+    menu = Instance.new("Frame", ScreenGui)
+    menu.Size = UDim2.new(0,300,0,300)
+    menu.Position = UDim2.new(0.5,-150,0.5,110)
+    menu.BackgroundColor3 = Color3.fromRGB(30,30,30)
+    menu.AnchorPoint = Vector2.new(0.5,0.5)
+    menu.Name = "Menu"
+    local UICorner = Instance.new("UICorner",menu)
+    UICorner.CornerRadius = UDim.new(0,12)
+
+    -- Minimizar circular azul
+    local btnMin = Instance.new("TextButton",menu)
+    btnMin.Size = UDim2.new(0,40,0,40)
+    btnMin.Position = UDim2.new(1,-50,0,5)
+    btnMin.Text = "-"
+    btnMin.BackgroundColor3 = Color3.fromRGB(0,0,255)
+    btnMin.TextColor3 = Color3.new(1,1,1)
+    btnMin.Font = Enum.Font.GothamBold
+    btnMin.TextSize = 24
+    btnMin.AutoButtonColor = true
+    btnMin.MouseButton1Click:Connect(function()
+        if minimized then
+            menu.Size = UDim2.new(0,300,0,300)
+            jumpBtn.Visible=true godBtn.Visible=true noclipBtn.Visible=true desyncBtn.Visible=true flyBtn.Visible=true thirdBtn.Visible=true xrayBtn.Visible=true espBtn.Visible=true discordBtn.Visible=true
+            minimized=false btnMin.Text="-"
+        else
+            menu.Size = UDim2.new(0,40,0,40)
+            jumpBtn.Visible=false godBtn.Visible=false noclipBtn.Visible=false desyncBtn.Visible=false flyBtn.Visible=false thirdBtn.Visible=false xrayBtn.Visible=false espBtn.Visible=false discordBtn.Visible=false
+            minimized=true btnMin.Text="+"
+        end
+    end)
+
+    local function criarBotao(nome,func,posY)
+        local btn = Instance.new("TextButton",menu)
+        btn.Size = UDim2.new(0.9,0,0,30)
+        btn.Position = UDim2.new(0.05,0,0,posY)
+        btn.Text = nome
+        btn.BackgroundColor3 = Color3.fromRGB(45,45,45)
+        btn.TextColor3 = Color3.new(1,1,1)
+        btn.Font = Enum.Font.Gotham
+        btn.TextSize = 16
+        btn.AutoButtonColor = true
+        btn.MouseButton1Click:Connect(func)
+        return btn
+    end
+
+    jumpBtn = criarBotao("Jump+God: Desativado",function()
+        jumpActive = not jumpActive
+        godActive = jumpActive
+        jumpBtn.Text="Jump+God: "..(jumpActive and "Ativado" or "Desativado")
+        notify("Jump+God "..(jumpActive and "Ativado" or "Desativado"))
+    end,40)
+
+    noclipBtn = criarBotao("Noclip: Desativado",function()
+        noclipActive = not noclipActive
+        noclipBtn.Text="Noclip: "..(noclipActive and "Ativado" or "Desativado")
+    end,80)
+
+    desyncBtn = criarBotao("Desync (Clone/Invisível): Desativado",function()
+        desyncActive = not desyncActive
+        desyncBtn.Text="Desync: "..(desyncActive and "Ativado" or "Desativado")
+    end,120)
+
+    flyBtn = criarBotao("Fly to Base",function()
+        notify("Tentando voar para a base...")
+    end,160)
+
+    thirdBtn = criarBotao("3RD FLOOR",function()
+        notify("Subindo para 3rd floor...")
+    end,200)
+
+    xrayBtn = criarBotao("X-Ray Bases",function()
+        xrayActive = not xrayActive
+        xrayBtn.Text="X-Ray: "..(xrayActive and "Ativado" or "Desativado")
+    end,240)
+
+    espBtn = criarBotao("ESP Brainrots",function()
+        espActive = not espActive
+        espBtn.Text="ESP Brainrots: "..(espActive and "Ativado" or "Desativado")
+    end,280)
+
+    discordBtn = criarBotao("Discord: Copy Link",function()
+        if setclipboard then setclipboard("https://discord.gg/TzkuDUJrX6") end
+    end,320)
+end
+
+VerifyButton.MouseButton1Click:Connect(function()
+    if KeyBox.Text == keyRequired then
+        KeyFrame.Visible=false
+        criarMenu()
+    else
+        KeyBox.Text="KEY INVÁLIDA!"
+    end
+end)
+
+-- Funções runtime
+RunService.Heartbeat:Connect(function()
+    local char = LocalPlayer.Character
+    if jumpActive and char then
+        local hum = char:FindFirstChildOfClass("Humanoid")
+        if hum then hum:ChangeState(Enum.HumanoidStateType.Jumping) end
+        hum.Health = hum.MaxHealth
+    end
+    if noclipActive and char then
+        for _,part in pairs(char:GetDescendants()) do
+            if part:IsA("BasePart") then part.CanCollide=false end
+        end
+    end
+end)
