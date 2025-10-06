@@ -1,5 +1,5 @@
 -- LocalScript (StarterGui) — Painel completo com Key + funções
-local KEY_CORRETA = "2026ROUBEUMBRAINROT"
+local KEY_CORRETA = "KeynovaRoubeumBrainrot"
 local LINK_KEY = "https://rekonise.com/key-script-x-roube-um-brainrot-dvdwv"
 local DISCORD_LINK = "https://discord.gg/TzkuDUJrX6"
 local TIKTOK_TEXT = "TIKTOK: @tridentehub"
