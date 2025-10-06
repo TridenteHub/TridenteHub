@@ -1,5 +1,5 @@
 -- LocalScript (StarterGui) — Painel completo com Key + funções
-local KEY_CORRETA = "KeynovaRoubeumBrainrot"
+local KEY_CORRETA = "KeynovaRoubeumBrainrot" -- <-- key alterada aqui
 local LINK_KEY = "https://rekonise.com/key-script-x-roube-um-brainrot-dvdwv"
 local DISCORD_LINK = "https://discord.gg/TzkuDUJrX6"
 local TIKTOK_TEXT = "TIKTOK: @tridentehub"
@@ -41,6 +41,7 @@ else
     frame.Active = true
     frame.Draggable = true
     frame.BorderSizePixel = 0
+    frame.Name = "MainFrame"
 
     -- title + tiktok
     local title = Instance.new("TextLabel", frame)
@@ -114,7 +115,6 @@ else
     btnGod.MouseButton1Click:Connect(function()
         state.god = not state.god
         btnGod.Text = state.god and "God (paired with Jump): ON" or "God (paired with Jump): OFF"
-        -- if enabling god and infJump not on, keep them independent; we'll keep god active regardless
     end)
 
     -- re-aplica god/infinite jump em respawn
@@ -122,7 +122,6 @@ else
         local hum = char and char:FindFirstChildOfClass("Humanoid")
         if hum and state.god then
             hum.Health = hum.MaxHealth
-            -- conecta sinal para manter saúde
             local conn
             conn = hum:GetPropertyChangedSignal("Health"):Connect(function()
                 if state.god and hum and hum.Health < hum.MaxHealth then
@@ -148,7 +147,6 @@ else
         applyGodToCharacter(char)
         -- reapply noclip and desync visuals if active
         if state.noclip then
-            -- small delay to ensure parts exist
             task.delay(0.2, function()
                 for _, p in ipairs(char:GetDescendants()) do
                     if p:IsA("BasePart") and p.Name ~= "HumanoidRootPart" then
@@ -158,7 +156,6 @@ else
             end)
         end
         if state.desync then
-            -- if we previously hid local parts, re-hide them locally
             task.delay(0.2, function()
                 for _, part in ipairs(char:GetDescendants()) do
                     if part:IsA("BasePart") then
@@ -173,10 +170,8 @@ else
     local btnDesync = criarBotao("Desync Body (usar clone)", 2 * 48 + 16)
     local currentDesyncClone = nil
     btnDesync.MouseButton1Click:Connect(function()
-        -- show small loading text
         btnDesync.Text = "Carregando..."
         task.spawn(function()
-            -- procura clone no Backpack ou StarterPack
             local backpack = LocalPlayer:FindFirstChildOfClass("Backpack")
             local candidate = nil
             if backpack then
@@ -202,19 +197,19 @@ else
                     end
                 end
             end
+
             task.wait(0.6)
             if not candidate then
                 btnDesync.Text = "Desync Body (usar clone)"
                 notify("Desync Body", "Clone não encontrado no inventário", 4)
                 return
             end
-            -- use candidate: clone and place near player (local only)
+
             local ok, err = pcall(function()
                 local cloned = candidate:Clone()
                 cloned.Parent = workspace
                 cloned:SetPrimaryPartCFrame((LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") and LocalPlayer.Character.HumanoidRootPart.CFrame) or CFrame.new())
                 currentDesyncClone = cloned
-                -- make local player invisible locally
                 local char = LocalPlayer.Character
                 if char then
                     for _, p in ipairs(char:GetDescendants()) do
@@ -234,7 +229,7 @@ else
         end)
     end)
 
-    -- botão para reverter desync (se quiser)
+    -- botão para reverter desync
     local btnDesyncOff = criarBotao("Reverter Desync", 3 * 48 + 24)
     btnDesyncOff.MouseButton1Click:Connect(function()
         if currentDesyncClone and currentDesyncClone.Parent then
@@ -262,7 +257,6 @@ else
             if obj:IsA("TextLabel") and obj.Text:lower():find("base de") then
                 local dono = obj.Text:match("Base de%s*(.*)")
                 if dono and dono:lower() == meuNome:lower() then
-                    -- retorna model pai mais próximo
                     local mdl = obj
                     while mdl and not mdl:IsA("Model") do
                         mdl = mdl.Parent
@@ -284,7 +278,6 @@ else
                 end
             end
         end
-        -- fallback: primeiro BasePart
         for _, obj in ipairs(baseModel:GetDescendants()) do
             if obj:IsA("BasePart") then return obj end
         end
@@ -297,7 +290,6 @@ else
             notify("Fly to Base", "Sua base não foi encontrada!", 4)
             return
         end
-        -- find highest part (top)
         local topPart
         local topY = -math.huge
         for _, p in ipairs(base:GetDescendants()) do
@@ -310,7 +302,7 @@ else
         end
         local vendaPart = encontrarParteVenda(base)
         local hrp = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
-        if not hrp then notify("Fly to Base", "HRP não encontrado", 4); return end
+        if not hrp then notify("Fly to Base","HRP não encontrado",4); return end
         if topPart then
             local above = topPart.Position + Vector3.new(0, 8, 0)
             local tw = TweenService:Create(hrp, TweenInfo.new(1.2, Enum.EasingStyle.Quad), {CFrame = CFrame.new(above)})
@@ -354,7 +346,6 @@ else
         state.xray = not state.xray
         btnXray.Text = state.xray and "X-Ray Base: ON" or "X-Ray Base: OFF"
         if state.xray then
-            -- salvar e aplicar
             xrayOriginals = {}
             for _, m in ipairs(workspace:GetDescendants()) do
                 if m:IsA("Model") and m.Name:lower():find("base") then
@@ -366,7 +357,6 @@ else
                     end
                 end
             end
-            -- highlights brainrots
             for _, obj in ipairs(workspace:GetDescendants()) do
                 if obj:IsA("BasePart") and obj.Name:lower():find("brainrot") then
                     if not obj:FindFirstChild("BR_Highlight") then
@@ -382,7 +372,6 @@ else
             end
             notify("X-Ray", "Aplicado",3)
         else
-            -- restaurar
             for p, orig in pairs(xrayOriginals) do
                 if p and p.Parent then p.Transparency = orig end
             end
@@ -403,9 +392,8 @@ else
         btnNoclip.Text = state.noclip and "Noclip: ON" or "Noclip: OFF"
         local char = LocalPlayer.Character
         if state.noclip and char then
-            -- connect Stepped and store connection
-            if not btnNoclip:FindFirstChild("Conn") then
-                local conn = RS.Stepped:Connect(function()
+            if not state._noclipConn then
+                state._noclipConn = RS.Stepped:Connect(function()
                     local ch = LocalPlayer.Character
                     if ch then
                         for _, p in ipairs(ch:GetDescendants()) do
@@ -415,18 +403,12 @@ else
                         end
                     end
                 end)
-                btnNoclip:SetAttribute("Conn", true)
-                btnNoclip:SetAttribute("connRef", true)
-                -- store in state so we can disconnect later
-                state._noclipConn = conn
             end
         else
-            -- disconnect
             if state._noclipConn then
                 pcall(function() state._noclipConn:Disconnect() end)
                 state._noclipConn = nil
             end
-            -- restore collisions on character
             local ch = LocalPlayer.Character
             if ch then
                 for _, p in ipairs(ch:GetDescendants()) do
@@ -443,7 +425,6 @@ else
     btnInvisAll.MouseButton1Click:Connect(function()
         state.invisAll = not state.invisAll
         btnInvisAll.Text = state.invisAll and "Make me invisible to ALL: ON" or "Make me invisible to ALL: OFF"
-        -- pede ao servidor para aplicar (servidor valida Owner)
         pcall(function()
             ToggleInvisEvent:FireServer(state.invisAll)
             notify("Invisibility", "Pedido enviado ao servidor", 3)
@@ -463,7 +444,6 @@ else
         local results = {}
         for _, obj in ipairs(workspace:GetDescendants()) do
             if obj:IsA("BasePart") and obj.Name:lower():find("brainrot") then
-                -- tenta ler valor (procura NumberValue ou Attribute "value")
                 local val = nil
                 if obj:FindFirstChild("Value") and obj.Value and type(obj.Value.Value) == "number" then
                     val = obj.Value.Value
@@ -515,7 +495,7 @@ else
     circleBtn.Size = UDim2.new(0,64,0,64)
     circleBtn.Position = UDim2.new(1,-90,0,20)
     circleBtn.AnchorPoint = Vector2.new(1,0)
-    circleBtn.Image = "" -- vazio, cor usaremos BackgroundColor
+    circleBtn.Image = ""
     circleBtn.BackgroundColor3 = Color3.fromRGB(0,120,255)
     circleBtn.AutoButtonColor = true
     circleBtn.ZIndex = 100
@@ -523,7 +503,6 @@ else
     circleBtn.BorderSizePixel = 0
     circleBtn.Visible = true
 
-    -- make it round
     local uiCorner = Instance.new("UICorner", circleBtn)
     uiCorner.CornerRadius = UDim.new(0,32)
 
@@ -531,7 +510,6 @@ else
     circleBtn.MouseButton1Click:Connect(function()
         minimizedCircle = not minimizedCircle
         if minimizedCircle then
-            -- animate frame to small and hide children, then show circle (already visible)
             TweenService:Create(frame, TweenInfo.new(0.25), {Size = UDim2.new(0,80,0,80), Position = UDim2.new(0.5,-40,0.5,-40)}):Play()
             task.delay(0.25, function()
                 for _, v in ipairs(frame:GetChildren()) do
@@ -542,7 +520,6 @@ else
             end)
             circleBtn.BackgroundColor3 = Color3.fromRGB(0,120,255)
         else
-            -- restore
             TweenService:Create(frame, TweenInfo.new(0.25), {Size = UDim2.new(0,420,0,480), Position = UDim2.new(0.5,-210,0.5,-240)}):Play()
             task.delay(0.25, function()
                 for _, v in ipairs(frame:GetChildren()) do
@@ -552,10 +529,8 @@ else
         end
     end)
 
-    -- ensure circle draggable? user wanted circle fully blue; let's allow drag
     circleBtn.Active = true
     circleBtn.Draggable = true
 
-    -- final notice
     notify("SSX Hub", "Painel carregado. Key: " .. KEY_CORRETA, 4)
 end
