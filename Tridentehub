@@ -1,0 +1,290 @@
+-- Script completo: Key system + Menu (Jump, God, ESP highlight vermelho, Noclip) + botão minimizar azul animado
+local KEY_CORRETA = "KeynovaRoubeumBrainrot"
+local LINK_KEY = "https://rekonise.com/key-script-x-roube-um-brainrot-dvdwv"
+
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local UIS = game:GetService("UserInputService")
+local RS = game:GetService("RunService")
+local TweenService = game:GetService("TweenService")
+
+-- Tela de Key
+local function criarTelaKey()
+	local gui = Instance.new("ScreenGui", LocalPlayer:WaitForChild("PlayerGui"))
+	gui.Name = "KeySystem"
+
+	local main = Instance.new("Frame", gui)
+	main.Size = UDim2.new(0, 400, 0, 250)
+	main.Position = UDim2.new(0.5, -200, 0.5, -125)
+	main.BackgroundColor3 = Color3.fromRGB(25,25,25)
+	main.BorderSizePixel = 0
+	main.Active = true
+	main.Draggable = true
+
+	local title = Instance.new("TextLabel", main)
+	title.Size = UDim2.new(1, 0, 0, 60)
+	title.Position = UDim2.new(0,0,0,0)
+	title.Text = "Digite sua Key"
+	title.BackgroundTransparency = 1
+	title.TextColor3 = Color3.new(1,1,1)
+	title.Font = Enum.Font.GothamBold
+	title.TextScaled = true
+
+	local box = Instance.new("TextBox", main)
+	box.PlaceholderText = "Sua Key Aqui"
+	box.Size = UDim2.new(0.8, 0, 0, 50)
+	box.Position = UDim2.new(0.1, 0, 0.4, 0)
+	box.Text = ""
+	box.Font = Enum.Font.Gotham
+	box.TextScaled = true
+	box.BackgroundColor3 = Color3.fromRGB(40,40,40)
+	box.TextColor3 = Color3.new(1,1,1)
+
+	local btnVerificar = Instance.new("TextButton", main)
+	btnVerificar.Size = UDim2.new(0.4, -10, 0, 50)
+	btnVerificar.Position = UDim2.new(0.1, 0, 0.75, 0)
+	btnVerificar.Text = "Verificar"
+	btnVerificar.BackgroundColor3 = Color3.fromRGB(0, 170, 0)
+	btnVerificar.TextColor3 = Color3.new(1,1,1)
+	btnVerificar.Font = Enum.Font.GothamBold
+	btnVerificar.TextScaled = true
+
+	local btnGetKey = Instance.new("TextButton", main)
+	btnGetKey.Size = UDim2.new(0.4, -10, 0, 50)
+	btnGetKey.Position = UDim2.new(0.5, 10, 0.75, 0)
+	btnGetKey.Text = "GET KEY"
+	btnGetKey.BackgroundColor3 = Color3.fromRGB(0, 100, 255)
+	btnGetKey.TextColor3 = Color3.new(1,1,1)
+	btnGetKey.Font = Enum.Font.GothamBold
+	btnGetKey.TextScaled = true
+
+	btnGetKey.MouseButton1Click:Connect(function()
+		-- copia o link para o clipboard (se suportado) e notifica
+		if setclipboard then
+			setclipboard(LINK_KEY)
+		end
+		pcall(function()
+			game.StarterGui:SetCore("SendNotification", {
+				Title = "Link copiado",
+				Text = "Cole no navegador para obter a key",
+				Duration = 3
+			})
+		end)
+	end)
+
+	btnVerificar.MouseButton1Click:Connect(function()
+		if box.Text == KEY_CORRETA then
+			gui:Destroy()
+			carregarMenu()
+		else
+			box.Text = ""
+			box.PlaceholderText = "Key incorreta!"
+			box.PlaceholderColor3 = Color3.fromRGB(255, 0, 0)
+		end
+	end)
+end
+
+-- Menu principal com funções
+function carregarMenu()
+	local gui = Instance.new("ScreenGui", LocalPlayer.PlayerGui)
+	gui.Name = "MainHub"
+
+	local frame = Instance.new("Frame", gui)
+	frame.Size = UDim2.new(0, 350, 0, 300)
+	frame.Position = UDim2.new(0.5, -175, 0.5, -150)
+	frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+	frame.Active = true
+	frame.Draggable = true
+
+	-- Botão minimizar azul (fixo, maior, confiável)
+	local minimizar = Instance.new("TextButton", gui)
+	minimizar.Size = UDim2.new(0, 50, 0, 50)
+	minimizar.Position = UDim2.new(1, -70, 0, 10) -- canto direito superior da tela
+	minimizar.AnchorPoint = Vector2.new(1, 0)
+	minimizar.BackgroundColor3 = Color3.fromRGB(0, 120, 255)
+	minimizar.Text = "—"
+	minimizar.TextColor3 = Color3.new(1,1,1)
+	minimizar.Font = Enum.Font.GothamBold
+	minimizar.TextScaled = true
+	minimizar.ZIndex = 10
+	minimizar.Active = true
+	minimizar.Draggable = false -- fixo para evitar bugs ao arrastar
+
+	local minimizado = false
+	local tamanhoOriginal = frame.Size
+
+	local function tweenSize(obj, tamanho, duracao)
+		local tweenInfo = TweenInfo.new(duracao, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+		local tween = TweenService:Create(obj, tweenInfo, {Size = tamanho})
+		tween:Play()
+		return tween
+	end
+
+	minimizar.MouseButton1Click:Connect(function()
+		minimizado = not minimizado
+		if minimizado then
+			-- anima para pequeno e esconde children do frame (exceto o título, se quiser)
+			tweenSize(frame, UDim2.new(0, 60, 0, 60), 0.25)
+			task.delay(0.25, function()
+				for _, v in pairs(frame:GetChildren()) do
+					if v:IsA("TextButton") or (v:IsA("TextLabel") and v ~= frame:FindFirstChildWhichIsA("TextLabel")) then
+						v.Visible = false
+					end
+				end
+			end)
+			minimizar.Text = "+"
+		else
+			-- volta ao tamanho original e restaura visibilidade
+			tweenSize(frame, tamanhoOriginal, 0.25)
+			task.delay(0.25, function()
+				for _, v in pairs(frame:GetChildren()) do
+					if v:IsA("TextButton") or v:IsA("TextLabel") then
+						v.Visible = true
+					end
+				end
+			end)
+			minimizar.Text = "—"
+		end
+	end)
+
+	-- helper para criar botões grandes
+	local function criarBotao(txt, y)
+		local b = Instance.new("TextButton", frame)
+		b.Size = UDim2.new(0.9, 0, 0, 50)
+		b.Position = UDim2.new(0.05, 0, 0, y)
+		b.Text = txt
+		b.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+		b.TextColor3 = Color3.new(1, 1, 1)
+		b.Font = Enum.Font.GothamBold
+		b.TextSize = 20
+		return b
+	end
+
+	-- Jump Infinito
+	local jump = false
+	local jumpBtn = criarBotao("Jump: OFF", 10)
+	jumpBtn.MouseButton1Click:Connect(function()
+		jump = not jump
+		jumpBtn.Text = jump and "Jump: ON" or "Jump: OFF"
+	end)
+	UIS.JumpRequest:Connect(function()
+		if jump then
+			local h = LocalPlayer.Character and LocalPlayer.Character:FindFirstChildWhichIsA("Humanoid")
+			if h then h:ChangeState(Enum.HumanoidStateType.Jumping) end
+		end
+	end)
+
+	-- God Mode
+	local god = false
+	local godConn
+	local godBtn = criarBotao("God: OFF", 75)
+	godBtn.MouseButton1Click:Connect(function()
+		god = not god
+		godBtn.Text = god and "God: ON" or "God: OFF"
+		local h = LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
+		if god and h then
+			h.Health = h.MaxHealth
+			godConn = h:GetPropertyChangedSignal("Health"):Connect(function()
+				if h.Health < h.MaxHealth then h.Health = h.MaxHealth end
+			end)
+		elseif godConn then
+			godConn:Disconnect()
+			godConn = nil
+		end
+	end)
+
+	-- ESP com Highlight vermelho
+	local espAtivo = false
+	local espBtn = criarBotao("ESP: OFF", 140)
+
+	local function adicionarHighlight(player)
+		if not player or player == LocalPlayer then return end
+		local char = player.Character
+		if char and not char:FindFirstChild("ESPHighlight") then
+			local success, err = pcall(function()
+				local h = Instance.new("Highlight")
+				h.Name = "ESPHighlight"
+				h.Adornee = char
+				h.Parent = char
+				h.FillColor = Color3.fromRGB(255, 0, 0)
+				h.OutlineColor = Color3.fromRGB(255, 0, 0)
+				h.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+			end)
+			if not success then
+				-- highlight pode não existir em alguns ambientes; fallback leve:
+				-- (não faz nada, mas evita erro fatal)
+			end
+		end
+	end
+
+	local function removerTodosHighlights()
+		for _, p in ipairs(Players:GetPlayers()) do
+			local c = p.Character
+			if c and c:FindFirstChild("ESPHighlight") then
+				c:FindFirstChild("ESPHighlight"):Destroy()
+			end
+		end
+	end
+
+	espBtn.MouseButton1Click:Connect(function()
+		espAtivo = not espAtivo
+		espBtn.Text = espAtivo and "ESP: ON" or "ESP: OFF"
+		if not espAtivo then
+			removerTodosHighlights()
+		end
+	end)
+
+	RS.Heartbeat:Connect(function()
+		if espAtivo then
+			for _, p in ipairs(Players:GetPlayers()) do
+				if p ~= LocalPlayer then
+					local c = p.Character
+					if c and not c:FindFirstChild("ESPHighlight") then
+						adicionarHighlight(p)
+					end
+				end
+			end
+		end
+	end)
+
+	-- Noclip (corrigido para evitar "voltar")
+	local noclip = false
+	local noclipConn
+	local noclipBtn = criarBotao("Noclip: OFF", 205)
+	noclipBtn.MouseButton1Click:Connect(function()
+		noclip = not noclip
+		noclipBtn.Text = noclip and "Noclip: ON" or "Noclip: OFF"
+		if noclip then
+			-- usar Stepped para aplicar antes da física e repetir constantemente
+			noclipConn = RS.Stepped:Connect(function()
+				local char = LocalPlayer.Character
+				if char then
+					-- desativa colisão somente nas partes (não tocar em HumanoidRootPart de forma que quebre movimentação)
+					for _, part in ipairs(char:GetDescendants()) do
+						if part:IsA("BasePart") and part.Name ~= "HumanoidRootPart" then
+							part.CanCollide = false
+						end
+					end
+					-- garantir que HumanoidRootPart não fique preso: alinhar CanTouch etc não é necessário aqui
+				end
+			end)
+		else
+			if noclipConn then
+				noclipConn:Disconnect()
+				noclipConn = nil
+			end
+			-- restaurar colisão
+			local char = LocalPlayer.Character
+			if char then
+				for _, part in ipairs(char:GetDescendants()) do
+					if part:IsA("BasePart") then
+						part.CanCollide = true
+					end
+				end
+			end
+		end
+	end)
+end
+
+-- inicia
+criarTelaKey()
